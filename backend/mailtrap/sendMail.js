@@ -1,5 +1,8 @@
 // backend/mailtrap/emails.js
 import nodemailer from "nodemailer";
+import {VERIFICATION_EMAIL_TEMPLATE,
+  WELCOME_EMAIL_TEMPLATE
+} from "./emailTemplates.js";
 
 export function sendMail(from, to, smtp, { subject, body, inReplyTo }) {
     const transport = nodemailer.createTransport({
@@ -31,7 +34,7 @@ export const sendVerificationEmail = async (smtp, email, verificationToken) => {
         from: 'MNA', // sender address (update your email)
         to: email, // receiver's email address
         subject: "Verify your email", // Subject line
-        html: `<p>Your Verification code ${verificationToken}</p>`, // HTML body with the verification link
+        html: VERIFICATION_EMAIL_TEMPLATE.replace("{verificationCode}", verificationToken),
     };
 
     try {
@@ -48,16 +51,26 @@ export const sendVerificationEmail = async (smtp, email, verificationToken) => {
 
 // Function to send a welcome email
 export const sendWelcomeEmail = async (smtp, email, name) => {
+  console.log("email",email)
+  console.log("WELCOME_EMAIL_TEMPLATE",WELCOME_EMAIL_TEMPLATE)
   const mailOptions = {
     from: `"Your Name" <imnaveed60@gmail.com>`, // sender address
     to: email, // list of receivers
     subject: "Welcome to our service", // Subject line
-    html: `<p>Welcome, ${name}! We're glad to have you.</p>`, // html body
-  };
+    html: WELCOME_EMAIL_TEMPLATE, // html body
+    template_uuid: "e65925d1-a9d1-4a40-ae7c-d92b37d593df",
+			template_variables: {
+				company_info_name: "Auth Company",
+				name: name,
+			},
+    };
+    console.log("mailOptions",mailOptions)
 
   try {
-    await sendMail(mailOptions.from, mailOptions.to, smtp, mailOptions);
-    console.log("Welcome email sent successfully");
+    await sendMail(mailOptions.from, mailOptions.to, smtp, {
+      subject: mailOptions.subject,
+      body: mailOptions.html, // HTML content
+  });    console.log("Welcome email sent successfully");
   } catch (error) {
     console.error("Error sending welcome email:", error);
     throw new Error(`Error sending welcome email: ${error.message}`);
