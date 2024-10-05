@@ -95,7 +95,6 @@ export const verifyEmail = async (req, res) => {
 	}
 };
 
-// Example of sending password reset email
 export const forgotPassword = async (req, res) => {
 	const { email } = req.body;
 	try {
