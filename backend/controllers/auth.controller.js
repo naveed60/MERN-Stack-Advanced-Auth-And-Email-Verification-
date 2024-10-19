@@ -19,6 +19,7 @@ const smtpConfig = {
 
 export const signup = async (req, res) => {
 	const { email, password, name } = req.body;
+	console.log("req.body",req.body)
 
 	try {
 		if (!email || !password || !name) {
