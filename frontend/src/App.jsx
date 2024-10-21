@@ -13,6 +13,7 @@ import LoadingSpinner from "./components/LoadingSpinner";
 import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
+import Navbar from "./pages/Navbar";
 
 // protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
@@ -40,6 +41,19 @@ const RedirectAuthenticatedUser = ({ children }) => {
 	return children;
 };
 
+// Layout component with Navbar
+const Layout = ({ children }) => (
+	<div className="min-h-screen bg-gradient-to-br from-blue-950 via-grey-500 to-emerald-900 flex flex-col">
+		<Navbar />
+		<div className="flex-grow flex items-center justify-center relative overflow-hidden">
+			<FloatingShape color="bg-green-500" size="w-64 h-64" top="-5%" left="10%" delay={0} />
+			<FloatingShape color="bg-emerald-500" size="w-48 h-48" top="70%" left="80%" delay={5} />
+			<FloatingShape color="bg-lime-500" size="w-32 h-32" top="40%" left="-10%" delay={2} />
+			{children}
+		</div>
+	</div>
+);
+
 function App() {
 	const { isCheckingAuth, checkAuth } = useAuthStore();
 
@@ -50,14 +64,7 @@ function App() {
 	if (isCheckingAuth) return <LoadingSpinner />;
 
 	return (
-		<div
-			className='min-h-screen bg-gradient-to-br
-    from-blue-950 via-grey-500 to-emerald-900 flex items-center justify-center relative overflow-hidden'
-		>
-			<FloatingShape color='bg-green-500' size='w-64 h-64' top='-5%' left='10%' delay={0} />
-			<FloatingShape color='bg-emerald-500' size='w-48 h-48' top='70%' left='80%' delay={5} />
-			<FloatingShape color='bg-lime-500' size='w-32 h-32' top='40%' left='-10%' delay={2} />
-
+		<Layout>
 			<Routes>
 				<Route
 					path='/'
@@ -67,6 +74,7 @@ function App() {
 						</ProtectedRoute>
 					}
 				/>
+				
 				<Route
 					path='/signup'
 					element={
@@ -105,7 +113,7 @@ function App() {
 				<Route path='*' element={<Navigate to='/' replace />} />
 			</Routes>
 			<Toaster />
-		</div>
+		</Layout>
 	);
 }
 
