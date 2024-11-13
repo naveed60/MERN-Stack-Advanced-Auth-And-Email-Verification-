@@ -1,35 +1,74 @@
-import React from "react";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { DollarSign, Image, Tag } from "lucide-react"; // icons for product name, price, and image
+import Input from "../components/Input"; // Assuming the Input component is reusable
+import { useProductStore } from "../store/product";
 
-const products = [
-  { id: 1, name: "Product A", price: 29.99, imageUrl: "https://via.placeholder.com/150" },
-  { id: 2, name: "Product B", price: 49.99, imageUrl: "https://via.placeholder.com/150" },
-  { id: 3, name: "Product C", price: 19.99, imageUrl: "https://via.placeholder.com/150" },
-  { id: 4, name: "Product D", price: 39.99, imageUrl: "https://via.placeholder.com/150" },
-  { id: 5, name: "Product A", price: 29.99, imageUrl: "https://via.placeholder.com/150" },
-  { id: 6, name: "Product B", price: 49.99, imageUrl: "https://via.placeholder.com/150" },
-  { id: 7, name: "Product C", price: 19.99, imageUrl: "https://via.placeholder.com/150" },
-  { id: 8, name: "Product D", price: 39.99, imageUrl: "https://via.placeholder.com/150" },
-  // Add more products as needed
-];
+const CreatePage = () => {
+	const [newProduct, setNewProduct] = useState({
+		name: "",
+		price: "",
+		image: "",
+	});
+	const { createProduct } = useProductStore();
 
-const DashboardPage = () => {
-  return (
-    <div className=" min-h-screen">
-      <h1 className="text-3xl font-bold text-center p-8">Our Products</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4">
-        {products.map((product) => (
-          <div key={product.id} className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center">
-            <img src={product.imageUrl} alt={product.name} className="h-40 w-full object-cover rounded-md mb-4" />
-            <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
-            <p className="text-gray-700 mb-4">${product.price.toFixed(2)}</p>
-            <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">
-              Add to Cart
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+	const handleAddProduct = async () => {
+		const { success, message } = await createProduct(newProduct);
+		alert(success ? `Success: ${message}` : `Error: ${message}`);
+		if (success) {
+			setNewProduct({ name: "", price: "", image: "" });
+		}
+	};
+
+	return (
+		<motion.div
+			initial={{ opacity: 0, y: 20 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{ duration: 0.5 }}
+			className='max-w-xl w-full bg-blue-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden mx-auto py-12'
+		>
+			<div className='p-8'>
+				<h1 className='text-4xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-emerald-500 text-transparent bg-clip-text'>
+					Create New Product
+				</h1>
+
+				<form onSubmit={(e) => { e.preventDefault(); handleAddProduct(); }}>
+					<Input
+						icon={Tag} // icon for product name
+						type='text'
+						placeholder='Product Name'
+						value={newProduct.name}
+						onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+					/>
+
+					<Input
+						icon={DollarSign} // icon for price
+						type='number'
+						placeholder='Price'
+						value={newProduct.price}
+						onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+					/>
+
+					<Input
+						icon={Image} // icon for image URL
+						type='text'
+						placeholder='Image URL'
+						value={newProduct.image}
+						onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
+					/>
+
+					<motion.button
+						whileHover={{ scale: 1.02 }}
+						whileTap={{ scale: 0.98 }}
+						className='w-full py-3 px-4 mt-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg shadow-lg hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition duration-200'
+						type='submit'
+					>
+						Add Product
+					</motion.button>
+				</form>
+			</div>
+		</motion.div>
+	);
 };
 
-export default DashboardPage;
+export default CreatePage;
