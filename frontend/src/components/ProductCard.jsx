@@ -30,13 +30,13 @@ const ProductCard = ({ product }) => {
 	};
 
 	return (
-		<div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden transform transition-all hover:-translate-y-1 hover:shadow-xl">
-			<img src={product.image} alt={product.name} className="w-full h-48 object-cover" />
+		<div className="bg-white dark:bg-white-600 shadow-lg rounded-lg overflow-hidden transform transition-all hover:-translate-y-1 hover:shadow-xl">
+			<img src={product.image}  className="w-full h-48 object-cover" />
 
 			<div className="p-4">
 				<h3 className="text-lg font-semibold mb-2">{product.name}</h3>
 
-				<p className="text-xl font-bold text-gray-600 dark:text-gray-200 mb-4">
+				<p className="text-xl font-bold text-black-600 dark:text-red-800 mb-4">
 					${product.price}
 				</p>
 
@@ -52,6 +52,12 @@ const ProductCard = ({ product }) => {
 						className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
 					>
 						Delete
+					</button>
+          <button
+						// onClick={() => handleDeleteProduct(product._id)}
+						className="p-2 w-full bg-green-500 text-white rounded hover:bg-green-800"
+					>
+						Add To Cart
 					</button>
 				</div>
 			</div>
