@@ -1,7 +1,4 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { DollarSign, Image, Tag } from "lucide-react"; // icons for product name, price, and image
-import Input from "../components/Input"; // Assuming the Input component is reusable
 import { useProductStore } from "../store/product";
 
 const CreatePage = () => {
@@ -10,64 +7,86 @@ const CreatePage = () => {
 		price: "",
 		image: "",
 	});
+	const [isLoading, setIsLoading] = useState(false);  // Loading state
 	const { createProduct } = useProductStore();
+	const [errorMessage, setErrorMessage] = useState(""); // To store error messages
 
 	const handleAddProduct = async () => {
+		// Simple form validation
+		if (!newProduct.name || !newProduct.price || !newProduct.image) {
+			setErrorMessage("Please fill in all fields.");
+			return;
+		}
+
+		setIsLoading(true);  // Start loading
+		setErrorMessage(""); // Reset error message
+
+		// Call the store's createProduct function
 		const { success, message } = await createProduct(newProduct);
-		alert(success ? `Success: ${message}` : `Error: ${message}`);
+		setIsLoading(false);  // Stop loading
+
 		if (success) {
-			setNewProduct({ name: "", price: "", image: "" });
+			alert(`Success: ${message}`);
+			setNewProduct({ name: "", price: "", image: "" });  // Clear form
+		} else {
+			alert(`Error: ${message}`);
+			setErrorMessage(message); // Set error message if any
 		}
 	};
 
 	return (
-		<motion.div
-			initial={{ opacity: 0, y: 20 }}
-			animate={{ opacity: 1, y: 0 }}
-			transition={{ duration: 0.5 }}
-			className='max-w-xl w-full bg-blue-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden mx-auto py-12'
-		>
-			<div className='p-8'>
-				<h1 className='text-4xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-emerald-500 text-transparent bg-clip-text'>
-					Create New Product
-				</h1>
+		<div className="max-w-xl mx-auto py-12">
+			<div className="flex flex-col items-center space-y-8">
+				<h1 className="text-4xl font-bold text-center mb-8">Create New Product</h1>
 
-				<form onSubmit={(e) => { e.preventDefault(); handleAddProduct(); }}>
-					<Input
-						icon={Tag} // icon for product name
-						type='text'
-						placeholder='Product Name'
-						value={newProduct.name}
-						onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-					/>
+				<div className="w-full bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+					<div className="flex flex-col space-y-4">
+						{/* Input for Product Name */}
+						<input
+							placeholder="Product Name"
+							name="name"
+							value={newProduct.name}
+							onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+							className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded"
+							disabled={isLoading} // Disable input while loading
+						/>
 
-					<Input
-						icon={DollarSign} // icon for price
-						type='number'
-						placeholder='Price'
-						value={newProduct.price}
-						onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-					/>
+						{/* Input for Price */}
+						<input
+							placeholder="Price"
+							name="price"
+							type="number"
+							value={newProduct.price}
+							onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+							className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded"
+							disabled={isLoading}
+						/>
 
-					<Input
-						icon={Image} // icon for image URL
-						type='text'
-						placeholder='Image URL'
-						value={newProduct.image}
-						onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
-					/>
+						{/* Input for Image URL */}
+						<input
+							placeholder="Image URL"
+							name="image"
+							value={newProduct.image}
+							onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
+							className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded"
+							disabled={isLoading}
+						/>
 
-					<motion.button
-						whileHover={{ scale: 1.02 }}
-						whileTap={{ scale: 0.98 }}
-						className='w-full py-3 px-4 mt-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg shadow-lg hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition duration-200'
-						type='submit'
-					>
-						Add Product
-					</motion.button>
-				</form>
+						{/* Error message */}
+						{errorMessage && <p className="text-red-500">{errorMessage}</p>}
+
+						{/* Submit Button */}
+						<button
+							onClick={handleAddProduct}
+							disabled={isLoading}  // Disable button when loading
+							className={`w-full p-2 text-white rounded ${isLoading ? "bg-blue-300" : "bg-blue-500 hover:bg-blue-600"}`}
+						>
+							{isLoading ? "Adding..." : "Add Product"}
+						</button>
+					</div>
+				</div>
 			</div>
-		</motion.div>
+		</div>
 	);
 };
 
