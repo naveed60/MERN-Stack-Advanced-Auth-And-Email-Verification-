@@ -113,7 +113,7 @@ function App() {
 				/>
 				{/* catch all routes */}
 				<Route path='*' element={<Navigate to='/' replace />} />
-				<Route path='/' element={<HomePage />} />
+				<Route path='/products' element={<HomePage />} />
 				<Route path='/create' element={<CreatePage />} />
 			</Routes>
 			<Toaster />
